@@ -78,7 +78,8 @@ module mul_fp(
 
     wire sign = a[31] ^ b[31];
 
-    wire [7:0] exp = a[30:23] + b[30:23] - 127;
+    logic [7:0] exp;
+    logic [1:0] exp_of;
 
     logic [47:0] frac;
 
@@ -89,12 +90,22 @@ module mul_fp(
     );
 
     //25 bits of multiplied mantissa -> first two bits are integer bits
-    logic [24:0] newFrac;
-    assign newFrac = frac[47:23];
+    logic [22:0] newFrac;
+
+    always_comb begin
+        if(frac[47]) begin
+            assign newFrac = frac[46:24];
+            assign {exp_of, exp} = a[30:23] + b[30:23] - 127 + 1;
+        end
+        else begin
+            assign newFrac = frac[45:23];
+            assign {exp_of, exp} = a[30:23] + b[30:23] - 127;
+        end
+    end
 
     //if the first bit of newFrac is 1, then the number is greater than 1
     always_comb begin
-        /*
+        
         //zero
         if((exp == 0 && newFrac == 0) || a == 0 || b == 0) begin
             c = 32'b0;
@@ -111,24 +122,25 @@ module mul_fp(
             state = 5'b00100; //inf
         end
         //underflow
-        else if(exp < 8'b01111111) begin
+        else if((exp_of == 2'b11) && (exp > 0)) begin
             c = 32'b0;
             state = 5'b00010; //underflow
         end
         //overflow
-        else if(exp > 8'b11111111) begin
-            c = {sign,8'b11111111,23'b0};
+        else if((exp_of == 1) && (exp > 0)) begin
+            c = {1'b0,8'b11111111,23'b0};
             state = 5'b00001; //overflow
         end
-        */
+        /*
         // if rounded value > 1
-        if(newFrac[24]) begin
-            c = {sign | 1'b0, exp+1, newFrac[23:1]};
+        else if(newFrac[24]) begin
+            c = {sign & 1'b1, (exp+1 & 8'b11111111), newFrac[23:1]};
             state = 5'b00000; //normal
         end
+        */
         // if rounded value < 1
         else begin
-            c = {sign | 1'b0, exp, newFrac[22:0]};
+            c = {sign, exp, newFrac[22:0]};
             state = 5'b00000; //normal
         end
     end
@@ -173,20 +185,81 @@ module tb_mul_fp;
             b = $random;
             expectedOut = $bitstoshortreal(a)*$bitstoshortreal(b);
             $display("a = %g, b = %g", $bitstoshortreal(a), $bitstoshortreal(b));
-            $display("Expected output = a*b = %g", expectedOut);
+            
             #10;
             $display("Module output = %g", $bitstoshortreal(c));
-
-            abs = ($bitstoshortreal(c) - expectedOut) > 0 ? ($bitstoshortreal(c) - expectedOut) : -(($bitstoshortreal(c) - expectedOut));
-            absExpected = expectedOut > 0 ? expectedOut : -expectedOut;
             
-            if(abs <= epsilon * absExpected) begin
-                $display("Test %0d passed", i);
-                passed = passed + 1;
+            // zero
+            if(expectedOut == 0 || a == 0 || b == 0) begin
+                $display("Zero");
+                if(c == 32'b0 && state == 5'b10000) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
+            end
+            //nan
+            else if((a[30:23] == 8'b11111111 && a[22:0] != 23'b0) || (b[30:23] == 8'b11111111 && b[22:0] != 23'b0)) begin
+                $display("NaN");
+                if(c == {1'b0,8'b11111111,23'b0} && state == 5'b01000) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
+            end
+            //inf
+            else if((a[30:23] == 8'b11111111 && a[22:0] == 23'b0) || (b[30:23] == 8'b11111111 && b[22:0] == 23'b0)) begin
+                $display("Inf");
+                if(c == {1'b0,8'b11111111,23'b0} && state == 5'b00100) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
+            end
+            //underflow
+            else if((expectedOut > 0 && expectedOut < 1.1754944e-38) || (expectedOut < 0 && expectedOut > -1.1754944e-38)) begin
+                $display("Underflow");
+                if(c == 32'b0 && state == 5'b00010) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
+            end
+            //overflow
+            else if(expectedOut < -3.4028235e+38 || expectedOut > 3.4028235e+38) begin
+                $display("Overflow");
+                if(c == {1'b0,8'b11111111,23'b0} && state == 5'b00001) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
             end
             else begin
-                $display("Test %0d failed", i);
+                $display("Normal Case");
+
+                $display("Expected output = a*b = %g", expectedOut);
+                abs = ($bitstoshortreal(c) - expectedOut) > 0 ? ($bitstoshortreal(c) - expectedOut) : -(($bitstoshortreal(c) - expectedOut));
+                absExpected = expectedOut > 0 ? expectedOut : -expectedOut;
+                
+                if(abs <= epsilon * absExpected) begin
+                    $display("Test %0d passed", i);
+                    passed = passed + 1;
+                end
+                else begin
+                    $display("Test %0d failed", i);
+                end
             end
+
             i++;
         end
         $display("Passed %0d out of %0d tests", passed, num_tests);
