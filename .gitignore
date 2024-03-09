@@ -1,0 +1,8 @@
+# Ignore work
+work/*
+
+# Ignore logs
+/*.wlf
+
+# Ignore foldername
+/foldername.txt

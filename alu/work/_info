@@ -1,0 +1,111 @@
+m255
+K4
+z2
+!s11f MIXED_VERSIONS
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/alu
+valu
+Z1 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
+Z2 !s110 1709434620
+!i10b 1
+!s100 CPM[lcjT6:aa8F8nX_=aR0
+Z3 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I[Z1J:1Q>KZBQaHnK[O9^o0
+Z4 VDg1SIo80bB@j0V0VzS_@n1
+S1
+R0
+Z5 w1709434600
+Z6 8C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/alu/alu.sv
+Z7 FC:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/alu/alu.sv
+!i122 5
+L0 3 30
+Z8 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z9 !s108 1709434620.000000
+Z10 !s107 C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/alu/alu.sv|
+Z11 !s90 -reportprogress|300|-work|work|C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/alu/alu.sv|
+!i113 1
+Z12 o-work work
+Z13 tCvgOpt 0
+valu_tb
+R1
+R2
+!i10b 1
+!s100 CX[]6Vl][Fj=E>6i`QAE]1
+R3
+ICk>ARBgo>mPNB=Y]o?OF;0
+R4
+S1
+R0
+R5
+R6
+R7
+!i122 5
+L0 34 104
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+vfsm
+R1
+Z14 !s110 1709609529
+!i10b 1
+!s100 BLGXg7D>ZJ<DbFJ0]6>1A1
+R3
+I2cjIoZEzl7e1Z5WZZA[gH0
+R4
+S1
+R0
+Z15 w1709609526
+Z16 8C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/fsm/fsm.sv
+Z17 FC:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/fsm/fsm.sv
+!i122 36
+L0 5 28
+R8
+r1
+!s85 0
+31
+Z18 !s108 1709609529.000000
+!s107 C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/fsm/fsm.sv|
+Z19 !s90 -reportprogress|300|-work|work|C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/fsm/fsm.sv|
+!i113 1
+R12
+R13
+vtb_fsm
+R1
+R14
+!i10b 1
+!s100 13nmaV7E2zMQS93olAGLU1
+R3
+In:mjjQHUlJge_5Tf:oL>n0
+R4
+S1
+R0
+R15
+R16
+R17
+!i122 36
+L0 36 57
+R8
+r1
+!s85 0
+31
+R18
+Z20 !s107 C:/Users/david/OneDrive/Desktop/Projects/Practices/Concepts-verilog/fsm/fsm.sv|
+R19
+!i113 1
+R12
+R13
